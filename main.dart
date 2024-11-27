@@ -1,73 +1,50 @@
 import 'package:flutter/material.dart';
-
-class PrimeiraTela extends StatelessWidget {
-  const PrimeiraTela({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Primeira Tela'),
-      ),
-      body: Center(
-        child: ElevatedButton(
-// Dentro do widget Primeira Rota
-          onPressed: () {
-//TODO: Navega para a segunda rota usando uma rota nomeada
-            Navigator.pushNamed(context, '/segunda');
-          },
-
-          child: const Text('Ir para Segunda Rota'),
-        ),
-      ),
-    );
-  }
-}
-
-class SegundaRota extends StatelessWidget {
-  const SegundaRota({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Segunda Rota'),
-      ),
-      body: Center(
-        child: ElevatedButton(
-// Dentro do widget Segunda Rota
-
-          onPressed: () {
-//TODO: Navega para a Primeira Rota usando a função pop da pilha de rotas
-            Navigator.pop(context);
-          },
-
-          child: const Text('Voltar'),
-        ),
-      ),
-    );
-  }
-}
-
-//A seguir, vamos codificar e nomear as nossas rotas dentro da main:
+import 'pagina2.dart';
 
 void main() {
-  runApp(
-    MaterialApp(
-      title: 'Rotas Nomeadas',
+  runApp(MeuApp());
+}
 
-// O aplicativo começa na rota nomeada "/". Neste caso, é a primeira rota
-//
+class MeuApp extends StatelessWidget {
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: RotaUm(),
+    );
+  }
+}
 
-      initialRoute: '/',
+class RotaUm extends StatefulWidget {
+  State<RotaUm> createState() => RotaUmPagina();
+}
 
-      routes: {
-// Quando navega-se para a rota nomeada "/", constrói-se o widget Primeira Tela.
-        '/': (context) => const PrimeiraTela(),
+class RotaUmPagina extends State<RotaUm> {
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Rota1'),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.arrow_forward),
+        onPressed: () {
+          Navigator.push(context, criarRota());
+        },
+      ),
+    );
+  }
+}
 
-// Quando navega-se para a rota nomeada "/segunda", constrói-se o widget Segunda Tela.
-        '/segunda': (context) => const SegundaRota(),
-      },
-    ),
+Route criarRota() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => RotaDois(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(1.0, 0.0);
+      const end = Offset(0, 0);
+      const curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+      return SlideTransition(position: animation.drive(tween),
+      child:child,
+      );
+    },
   );
 }
